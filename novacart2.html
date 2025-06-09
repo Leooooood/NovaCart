@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mein Shop</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .left, .right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .lang-toggle {
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .cart-icon {
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cart-icon::after {
+      content: attr(data-count);
+      position: absolute;
+      top: -8px;
+      right: -10px;
+      background: red;
+      color: white;
+      font-size: 0.7rem;
+      border-radius: 50%;
+      padding: 2px 6px;
+      display: inline-block;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    .product {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .product img {
+      max-width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .product h3 {
+      margin: 0.5rem 0;
+    }
+
+    .product button {
+      background: #222;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    #cart {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 300px;
+      background: #fff;
+      height: 100%;
+      border-left: 1px solid #ccc;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+      padding: 1rem;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+
+    #cart.open {
+      transform: translateX(0);
+    }
+
+    #cart h2 {
+      margin-top: 0;
+    }
+
+    #cart ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    #cart ul li {
+      margin-bottom: 0.5rem;
+    }
+
+    #close-cart {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      float: right;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="left">
+      <div class="logo" data-text="logo">Mein Shop</div>
+    </div>
+    <div class="right">
+      <div class="lang-toggle" onclick="toggleLang()">🇩🇪 Deutsch | English 🇬🇧</div>
+      <div class="cart-icon" onclick="toggleCart()" data-count="0">🛒</div>
+    </div>
+  </header>
+
+  <main class="products">
+    <div class="product">
+      <img src="https://via.placeholder.com/200x150" alt="Produkt 1" />
+      <h3 data-text="product1">Produkt 1</h3>
+      <p data-text="price1">Preis: 19,99 €</p>
+      <button onclick="addToCart('Produkt 1', '19.99')" data-text="add1">In den Warenkorb</button>
+    </div>
+    <div class="product">
+      <img src="https://via.placeholder.com/200x150" alt="Produkt 2" />
+      <h3 data-text="product2">Produkt 2</h3>
+      <p data-text="price2">Preis: 29,99 €</p>
+      <button onclick="addToCart('Produkt 2', '29.99')" data-text="add2">In den Warenkorb</button>
+    </div>
+  </main>
+
+  <div id="cart">
+    <button id="close-cart" onclick="toggleCart()">✖</button>
+    <h2 data-text="cartTitle">Warenkorb</h2>
+    <ul id="cart-items"></ul>
+  </div>
+
+  <footer>
+    <span data-text="footer">© 2025 Mein Shop. Alle Rechte vorbehalten.</span>
+  </footer>
+
+  <script>
+    let currentLang = "de";
+    const translations = {
+      en: {
+        logo: "My Shop",
+        product1: "Product 1",
+        price1: "Price: €19.99",
+        add1: "Add to Cart",
+        product2: "Product 2",
+        price2: "Price: €29.99",
+        add2: "Add to Cart",
+        cartTitle: "Shopping Cart",
+        footer: "© 2025 My Shop. All rights reserved."
+      },
+      de: {
+        logo: "Mein Shop",
+        product1: "Produkt 1",
+        price1: "Preis: 19,99 €",
+        add1: "In den Warenkorb",
+        product2: "Produkt 2",
+        price2: "Preis: 29,99 €",
+        add2: "In den Warenkorb",
+        cartTitle: "Warenkorb",
+        footer: "© 2025 Mein Shop. Alle Rechte vorbehalten."
+      }
+    };
+
+    function toggleLang() {
+      currentLang = currentLang === "de" ? "en" : "de";
+      document.querySelectorAll("[data-text]").forEach(el => {
+        const key = el.getAttribute("data-text");
+        el.textContent = translations[currentLang][key];
+      });
+    }
+
+    function toggleCart() {
+      document.getElementById("cart").classList.toggle("open");
+      renderCart();
+    }
+
+    function addToCart(name, price) {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart.push({ name, price });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+    }
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      document.querySelector(".cart-icon").setAttribute("data-count", cart.length);
+    }
+
+    function renderCart() {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const list = document.getElementById("cart-items");
+      list.innerHTML = "";
+      cart.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.name} – €${item.price}`;
+        list.appendChild(li);
+      });
+    }
+
+    updateCartCount();
+  </script>
+</body>
+</html>
